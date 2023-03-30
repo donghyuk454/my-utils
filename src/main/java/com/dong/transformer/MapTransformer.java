@@ -19,6 +19,9 @@ public class MapTransformer implements Transformer {
             e.printStackTrace();
         }
 
+        if (obj == null)
+            return null;
+
         // < key, value > 연산
         while (iterator.hasNext()) {
             String key = iterator.next();
@@ -45,15 +48,19 @@ public class MapTransformer implements Transformer {
 
     private static <T> void invokeSetter(T obj, Method setter, Class<?> fieldType, Object value) throws InvocationTargetException, IllegalAccessException {
         String fieldTypeName = fieldType.getTypeName();
-        
-        if (fieldTypeName.equals(Integer.class.getTypeName())) {
-            setter.invoke(obj, Integer.parseInt((String) value));
-        } else if (fieldTypeName.equals(Long.class.getTypeName())) {
-            setter.invoke(obj, Long.parseLong((String) value));
-        } else if (fieldTypeName.equals(Float.class.getTypeName())) {
-            setter.invoke(obj, Float.parseFloat((String) value));
-        } else if (fieldTypeName.equals(Double.class.getTypeName())) {
-            setter.invoke(obj, Double.parseDouble((String) value));
+
+        if (fieldTypeName.equals(Integer.class.getTypeName()) || fieldTypeName.equals("int")) {
+            setter.invoke(obj, Integer.parseInt(value));
+        } else if (fieldTypeName.equals(Long.class.getTypeName()) || fieldTypeName.equals("long")) {
+            setter.invoke(obj, Long.parseLong(value));
+        } else if (fieldTypeName.equals(Float.class.getTypeName()) || fieldTypeName.equals("float")) {
+            setter.invoke(obj, Float.parseFloat(value));
+        } else if (fieldTypeName.equals(Double.class.getTypeName()) || fieldTypeName.equals("double")) {
+            setter.invoke(obj, Double.parseDouble(value));
+        } else if (fieldTypeName.equals(Short.class.getTypeName()) || fieldTypeName.equals("short")) {
+            setter.invoke(obj, Short.parseShort(value));
+        } else if (fieldTypeName.equals(Boolean.class.getTypeName()) || fieldTypeName.equals("boolean")) {
+            setter.invoke(obj, Boolean.getBoolean(value));
         } else {
             setter.invoke(obj, fieldType.cast(value));
         }
