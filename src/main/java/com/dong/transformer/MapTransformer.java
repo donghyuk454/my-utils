@@ -46,7 +46,32 @@ public class MapTransformer implements Transformer {
         return obj;
     }
 
-    private static <T> void invokeSetter(T obj, Method setter, Class<?> fieldType, Object value) throws InvocationTargetException, IllegalAccessException {
+    public <V, T> Map<String, V> transformFrom (T obj) {
+        if (obj == null)
+            return Collections.emptyMap();
+
+        Map<String, V> map = new HashMap<>();
+
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            String key = field.getName();
+            String getterName = "get" +
+                    key.substring(0, 1).toUpperCase() +
+                    key.substring(1);
+            try {
+                Method getter = obj.getClass().getMethod(getterName);
+
+                V value = (V) getter.invoke(obj);
+                map.put(key, value);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return map;
+    }
+
+    private <T> void invokeSetter(T obj, Method setter, Class<?> fieldType, String value) throws InvocationTargetException, IllegalAccessException {
         String fieldTypeName = fieldType.getTypeName();
 
         if (fieldTypeName.equals(Integer.class.getTypeName()) || fieldTypeName.equals("int")) {
