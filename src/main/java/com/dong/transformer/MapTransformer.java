@@ -46,11 +46,11 @@ public class MapTransformer implements Transformer {
         return obj;
     }
 
-    public <V, T> Map<String, V> transformFrom (T obj) {
+    public <T> Map<String, String> transformFrom (T obj) {
         if (obj == null)
             return Collections.emptyMap();
 
-        Map<String, V> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
 
         Field[] fields = obj.getClass().getDeclaredFields();
         for (Field field : fields) {
@@ -61,7 +61,7 @@ public class MapTransformer implements Transformer {
             try {
                 Method getter = obj.getClass().getMethod(getterName);
 
-                V value = (V) getter.invoke(obj);
+                String value = getter.invoke(obj).toString();
                 map.put(key, value);
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
